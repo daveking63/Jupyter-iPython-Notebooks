@@ -1,4 +1,4 @@
-# Jupyter_iPython_Notebooks
+# Jupyter-iPython-Notebooks
 Collection of Notebooks containing notes/tutorial on various Python programs
 
 This repository contains a series of Jupyter/iPython notebooks illustrating the use of select Python modules or libraries dealing with various problems in data science.  The current list of topics includes:
