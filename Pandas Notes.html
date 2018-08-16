@@ -11775,7 +11775,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3>Understanding <i>pandas</i>: A Case Study Approach</h3><p>Like NumPy, <b><i>pandas</i></b> is Python package that is part of a larger "open-source software system for mathematics, science, and engineering" called SciPy. While NumPy provides a laundry list of classes, methods and functions for dealing with arrays, it offers modest support for further data analysis and modeling.  This is where pandas comes in. It enables Python developers to address the entire data analysis workflow without have to rely on more domain specific programming environments like R.</p>
+<h2>Understanding <i>pandas</i>: A Case Study Approach</h2><p>Like NumPy, <b><i>pandas</i></b> is Python package that is part of a larger "open-source software system for mathematics, science, and engineering" called SciPy. While NumPy provides a laundry list of classes, methods and functions for dealing with arrays, it offers modest support for further data analysis and modeling.  This is where pandas comes in. It enables Python developers to address the entire data analysis workflow without have to rely on more domain specific programming environments like R.</p>
 <p>The pandas package makes working with relational or labeled tabular data relatively simple and straightforward. As the documentation for the package notes, it is well suited for many kinds of data including tabular data with differing data types (similar to an Excel spreadsheet), time series data, arrays and matricies with row and column labels, and many other forms of observational or statistical data sets with and without labels.</p>
 <p>Most of pandas' capabilities are surfaced in either one dimensional arrays called <b><i>Series</i></b> or two dimensional arrays called <b><i>DataFrames</i></b>. This note will concentrate on the latter - the basic structure, methods, functions, and techniques for analyzing and visualizing the data in dataframes. Like NumPy arrays, the methods and functions associated with these structures are very extensive, far too numerous to cover in this set of notes. For compete coverage, see:</p>
 <ul>
@@ -11783,10 +11783,31 @@ div#notebook {
 <li>Dataframes: https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html </li>
 <li>Tutorial covering both types of data structures: https://pandas.pydata.org/pandas-docs/stable/tutorials.html# </li>
 <li>Tutorial from TutorialPoints covering basic data structures and associated methods and functions: https://www.tutorialspoint.com/python_pandas/index.htm </li>
-</ul><h4>Case Study: Billboard and RIAA Top Single and Album Unit Sales</h4><p>To help understand the use and value of dataframes, I'm going to employ a small collection of data sets scraped from two sites that track the volume of sales, streams and airplay of the most popular music singles and albums.  The data are described in detail in another repository -- see the &lt;a href= '<a href="https://github.com/daveking63/BillBoard_and_RIAA_datasets/blob/master/readme.md&#39;&gt;">https://github.com/daveking63/BillBoard_and_RIAA_datasets/blob/master/readme.md&#39;&gt;</a><b>Billboard and RIAA Datasets</b>&lt;/a&gt;.</p>
-<p>Recently, both sites reached milestone - 60 years of recording and reporting on the best selling songs and albums. Both also provided special charts or reports to mark the ocassion. For Billboard it was the
-&lt;a href = "<a href="https://www.billboard.com/charts/hot-100-60th-anniversary&quot;&gt;Hot">https://www.billboard.com/charts/hot-100-60th-anniversary&quot;&gt;Hot</a> 100 60th Anniversary&lt;/a&gt; (actually it was to Hot 600, not sure why it was 600 but ...). For RIAA it was a listing of the 
-&lt;a href = "<a href="https://www.riaa.com/gold-platinum/?tab_active=awards_by_artist#search_section&quot;&gt;Top">https://www.riaa.com/gold-platinum/?tab_active=awards_by_artist#search_section&quot;&gt;Top</a> Certified Artists&lt;/a&gt; and &lt;a href = "<a href="https://www.riaa.com/gold-platinum/?tab_active=awards_by_artist#search_section&quot;&gt;Top">https://www.riaa.com/gold-platinum/?tab_active=awards_by_artist#search_section&quot;&gt;Top</a> Albums&lt;/a&gt; in the US.</p>
+</ul><h3><a class="anchor" id="toc">Table of Contents</a></h3><ol>
+<li><a href="#Dataset">Case Study: Billboard Top Singles</a><br></li>
+<li><a href="#Loading">Loading a Dataframe and Inspecting the Data</a><br>
+<a href="#Reading">Reading Text and Excel Files</a><br>
+<a href="#Describe">Describing the Structure of a Dataframe</a><br>
+<a href="#Summary">Summary of Initial Structural Analysis</a><br></li>
+<li><a href="#Indexing and Selecting">Indexing and Selecting Particular Rows and Columns</a><br>
+<a href="#Indexing">Indexing</a><br>
+<a href="#Labels">Labels as Indexes</a><br>
+<a href="#Groupby1">Groupby Method: Brief Example</a><br>
+<a href="#Subsets">Selecting Subsets of Data</a><br>
+<a href="#Colnames">   Using Column Names</a><br>
+<a href="#loc">   Using loc</a><br>
+<a href="#iloc">   Using iloc</a><br></li>
+<li><a href="#Frequency">Frequency Distributions and Other Statistics</a><br>
+<a href="#Value Counts">Value_Counts Method</a><br>
+<a href="#Groupby0">Groupby Method: Computational Details</a><br>
+<a href="#Adding">Adding New Columns</a><br>
+<a href="#Unstack">Unstacking Multi-Column Arrays</a><br></li>
+<li><a href="#Plots">Pandas Plots</a><br>
+<a href="#Bars">Bar Plots</a><br>
+<a href="#Subplots">Subplots</a><br>
+<a href="#Lines">Line Plots</a><br></li>
+<li><a href="#Final">Final Comments</a><br></li>
+</ol>
 
 </div>
 </div>
@@ -11832,10 +11853,10 @@ div#notebook {
 
 
 
-<div id="331f4365-f295-4dbd-bc07-1e218d232c26"></div>
+<div id="a0447851-8335-4c56-bcf3-e5cddcc95d20"></div>
 <div class="output_subarea output_javascript ">
 <script type="text/javascript">
-var element = $('#331f4365-f295-4dbd-bc07-1e218d232c26');
+var element = $('#a0447851-8335-4c56-bcf3-e5cddcc95d20');
 IPython.OutputArea.prototype._should_scroll = function(lines) {
     return false;
 }
@@ -11852,8 +11873,29 @@ IPython.OutputArea.prototype._should_scroll = function(lines) {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4>Loading a Dataframe and Inspecting the Data</h4><p>To begin let's look at the Billboard data - singles with the largest number of unit sales (physical and digital) for the past 60  years. Below is a screen shot of a slice of the data in Excel. The data is also provided in comma separated text format (see <a href='https://github.com/daveking63/Billboard-and-RIAA-datasets/blob/master/BB-Top600_Songs.txt'>BB-Top600_Songs.txt</a>).</p>
-<p><img src="attachment:BB-Top600_Songs-Excel.jpg" alt="BB-Top600_Songs-Excel.jpg"></p>
+<p><a class="anchor" id="dataset"></a></p>
+<p><h3>Case Study: Billboard Top Singles for Last 60 Years</h3></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>To help understand the use and value of dataframes, I'm going to employ a dataset scraped from the Billboard web site that tracks the the most popular singles of all time where popularity is measured by units of sales for physical media as well as airplay, digital downloads, and streaming. The data are described in detail in another repository -- see the &lt;a href= '<a href="https://github.com/daveking63/BillBoard_and_RIAA_datasets/blob/master/readme.md&#39;&gt;">https://github.com/daveking63/BillBoard_and_RIAA_datasets/blob/master/readme.md&#39;&gt;</a><b>Billboard and RIAA Datasets</b>&lt;/a&gt;.</p>
+<p>Recently, Billboard reached 60 years of recording and reporting on the best selling songs. To market the occasion they created a special dataset -- the 
+&lt;a href = "<a href="https://www.billboard.com/charts/hot-100-60th-anniversary&quot;&gt;Hot">https://www.billboard.com/charts/hot-100-60th-anniversary&quot;&gt;Hot</a> 100 60th Anniversary&lt;/a&gt; (actually it was to Hot 600, not sure why it was 600 but ...). It's this dataset that is used to illustrate some of the more widely used features of <i>pandas</i>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Loading"></a></p>
+<p><h3>Loading a Dataframe and Inspecting the Data</h3></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>To begin let's look at the Billboard data - singles with the largest number of unit sales (physical and digital) for the past 60  years. Below is a screen shot of a slice of the data in Excel. The data is also provided in comma separated text format (see <a href='https://github.com/daveking63/Billboard-and-RIAA-datasets/blob/master/BB-Top600_Songs.txt'>BB-Top600_Songs.txt</a>).</p>
+<p><img src="https://github.com/daveking63/Billboard-and-RIAA-datasets/blob/master/BB_Top600_Songs-Excel.jpg" alt="Billboard Top600" title="Billboard Top600"></p>
 <p>Before we load the data, we're going to import both the NumPy and the pandas library.  In most analyses the libraries are often used in tandem.</p>
 
 </div>
@@ -11877,7 +11919,12 @@ IPython.OutputArea.prototype._should_scroll = function(lines) {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h5>Reading Text and Excel Files</h5><p>Regardless of whether you use the Excel or text versions of the data, the steps needed to read the data into a dataframe are basically the same. To load the text version we can use the "read_csv" method. This particular method has over 50 possible parameters. A few of the more frequently used are:</p>
+<p><a class="anchor" id="Reading"></a></p>
+<p><h4>Reading Text and Excel Files</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>Regardless of whether you use the Excel or text versions of the data, the steps needed to read the data into a dataframe are basically the same. To load the text version we can use the "read_csv" method. This particular method has over 50 possible parameters. A few of the more frequently used are:</p>
 <p><ul></p>
 <p><li>"sep" (separator) or "delimiter" for the character (e.g. "," or "|") or escape sequence (e.g. '\t' for tab) used separate the columns in a table or vector. By default the sep is a comma ','.</li></p>
 <p><li>"header" to indicate whether a header row is included or not. By default it assumes that the first row of the file is the column headers.  Setting header=None  for the columns indicates that there is no header in the file. In that case the "name" parameter is used to establish a list of values for the column headers (e.g. name = '['name1', 'name2',...,'nameN']').</p>
@@ -11928,7 +11975,12 @@ IPython.OutputArea.prototype._should_scroll = function(lines) {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h5>Describing the Structure of a Dataframe</h5><p>After creating a dataframe, the second step usually involves developing a quick understanding its basic structure, that is: what are the column names, the data types, the number of rows, some of the basic statistical characteristics, etc.  pandas provides a variety of methods for obtaining this information.  Here are some of the simpler ones:</p>
+<p><a class="anchor" id="Describe"></a></p>
+<p><h4>Describing the Structure of a Dataframe</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>After creating a dataframe, the second step usually involves developing a quick understanding its basic structure, that is: what are the column names, the data types, the number of rows, some of the basic statistical characteristics, etc.  pandas provides a variety of methods for obtaining this information.  Here are some of the simpler ones:</p>
 <ul>
     <li><i>info()</i> -- lists column names and their data types.</li>
     <li><i>columns[start:end]</i> -- lists specified column names, default is all.</li>
@@ -12502,7 +12554,7 @@ In this case rank is the only numerical column.
       <th>top</th>
       <td>NaN</td>
       <td>Mariah Carey</td>
-      <td>HELLO</td>
+      <td>JUMP</td>
       <td>Duo/Group</td>
       <td>Pop</td>
       <td>80s</td>
@@ -12648,7 +12700,12 @@ In this case rank is the only numerical column.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4>Summary of Initial Structural Analysis</h4><p>So, looking at the results produced by the simple methods above, what are some of things we know about the Billboard data?</p>
+<p><a class="anchor" id="Summary"></a></p>
+<p><h4>Summary of Initial Structural Analysis</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>So, looking at the results produced by the simple methods above, what are some of things we know about the Billboard data?</p>
 <p><ul>
     <li><i>Columns</i>: This particular dataframe or data set has 6 columns (or fields or variables depending on your viewpoint) including the rank of the song, the artist's name, the song's title, the sex of the artist, the genre of the song, and the decade the song was released.</li><br>
     <li><i>Data Types</i>: From looking at the data types for each of the columns, it's clear that this data set is short on numerical data.  Only 'Rank' is an integer.  The rest of the columns consist of objects or strings denoting the categories that either the artist(s) or songs belong to.  For example, 'Gender' column refers to the gender of the artist(s), while the 'Genre' refers to the 'genre' of the song (i.e. 'R&B', 'Rock', 'Pop', etc.). Which leads to the question of, 'what type of analysis can be performed on these non-numeric columns?' I'll provide the answer shortly.</li><br>
@@ -12662,7 +12719,12 @@ In this case rank is the only numerical column.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4>Indexing and Selecting: Determining the Values in Particular Rows and Columns</h4><p>Given that a dataframe is basically array, if you understand how to index an array, you'll understand the basic methods used in indexing and selecting values in a dataframe. Also, you've seen 'index' used in some of the methods discussed above.The major addition is that you can also use labels instead of integers as a way of designating particular columns.</p>
+<p><a class="anchor" id="Indexing and Selecting"></a></p>
+<p><h3>Indexing and Selecting: Determining the Values in Particular Rows and Columns</h3></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>Given that a dataframe is basically array, if you understand how to index an array, you'll understand the basic methods used in indexing and selecting values in a dataframe. Also, you've seen 'index' used in some of the methods discussed above.The major addition is that you can also use labels instead of integers as a way of designating particular columns.</p>
 
 </div>
 </div>
@@ -12671,7 +12733,12 @@ In this case rank is the only numerical column.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h5>Indexing</h5><p>In pandas the <b>index</b> is an ordered <i>set</i> of row labels (integers or strings) that is typically used for selecting the rows to be displayed or used in a computation. Since the index is a set, it implies that the labels are all unique or hashable. By default, pandas assigns a set of integer values to the (row) index, starting with row 0 and ending with row N-1 in steps of 1.  In the case of the dataframe I've been using -- DF_BBTop600Text -- the row index starts with 0 and ends with 599 (which is 600-1 or the 'stop' value - 1) with steps of 1 (row 0,1,2...). No surprise, the index of a dataframe is obtained with the 'index' method.</p>
+<p><a class="anchor" id="Indexing"></a></p>
+<p><h4>Indexing</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>In pandas the <b>index</b> is an ordered <i>set</i> of row labels (integers or strings) that is typically used for selecting the rows to be displayed or used in a computation. Since the index is a set, it implies that the labels are all unique or hashable. By default, pandas assigns a set of integer values to the (row) index, starting with row 0 and ending with row N-1 in steps of 1.  In the case of the dataframe I've been using -- DF_BBTop600Text -- the row index starts with 0 and ends with 599 (which is 600-1 or the 'stop' value - 1) with steps of 1 (row 0,1,2...). No surprise, the index of a dataframe is obtained with the 'index' method.</p>
 
 </div>
 </div>
@@ -12713,17 +12780,20 @@ In this case rank is the only numerical column.
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h5>Labels as Indexes</h5><p>It is possible to explicitly assign a set of strings to designate the row index of a dataframe, but most of the time the default is used (i.e. integers from 0 to N-1). However, there are some couple of cases where string labels come in handy:</p>
+<p><a class="anchor" id="Labels"></a></p>
+<p><h4>Labels as Indexes</h4></p>
 <ul>
-<li><b>First case -- Results of a method produce a series or dataframe where the rows have string labels</b>: As an example, consider the 'describe' method. Here, the output is actually a dataframe, whose columns are the columns of the dataframe being described, while the labels for the rows are the computed statistics such as ['count', 'unique', ...,'max'].  If the results of the method are assigned to variable:
-<br>    
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>It is possible to explicitly assign a set of strings to designate the row index of a dataframe, but most of the time the default is used (i.e. integers from 0 to N-1). However, there are some couple of cases where string labels come in handy. The first case involves methods that result in a 'series' or 'dataframe' where the rows have string labels. This is discussed below. The second of these is the 'groupby' method that also produces either a series or dataframe where the rows also have string labels.  This case is discuss later.</p>
+<p>The first case occurs when a method produces a series or dataframe where the rows have string labels. As an example, consider the 'describe' method. Here, the output is actually a dataframe, whose columns are the columns of the dataframe being described, while the labels for the rows are the computed statistics such as ['count', 'unique', ...,'max'].  If the results of the method are assigned to variable:
+<br><br>
     <i>my_results = DF_BBTop600Text.describe(include='all)</i>
-<br>  
+<br><br>
 then we can retrieve the various results using the name of the statistic
 <br><br>
-<i>my_results.loc['count'])</i>.
-</li>
-</ul>
+<i>my_results.loc['count'])</i>.</p>
+
 </div>
 </div>
 </div>
@@ -12736,6 +12806,7 @@ then we can retrieve the various results using the name of the statistic
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Storing the results from &#39;describe&#39; into a dataframe:&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;my_describe_df = DF_BBTop600Text.describe(include=&#39;all&#39;)&quot;</span><span class="p">)</span>
 <span class="n">my_describe_df</span> <span class="o">=</span> <span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+<span class="n">my_describe_df</span>
 <span class="n">my_describe_df</span><span class="o">.</span><span class="n">index</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Display the values for the row labeled &#39;unique&#39;: my_describe_df.loc[&#39;unique&#39;] &quot;</span><span class="p">)</span>
@@ -12761,6 +12832,146 @@ Storing the results from &#39;describe&#39; into a dataframe:
 my_describe_df = DF_BBTop600Text.describe(include=&#39;all&#39;)
 </pre>
 </div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[11]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Rank</th>
+      <th>Artist</th>
+      <th>SongTitle</th>
+      <th>Gender</th>
+      <th>Genre</th>
+      <th>Decade</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>600.000000</td>
+      <td>600</td>
+      <td>600</td>
+      <td>600</td>
+      <td>600</td>
+      <td>600</td>
+    </tr>
+    <tr>
+      <th>unique</th>
+      <td>NaN</td>
+      <td>456</td>
+      <td>594</td>
+      <td>6</td>
+      <td>8</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>top</th>
+      <td>NaN</td>
+      <td>Mariah Carey</td>
+      <td>JUMP</td>
+      <td>Duo/Group</td>
+      <td>Pop</td>
+      <td>80s</td>
+    </tr>
+    <tr>
+      <th>freq</th>
+      <td>NaN</td>
+      <td>10</td>
+      <td>2</td>
+      <td>233</td>
+      <td>240</td>
+      <td>133</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>300.500000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>173.349358</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>1.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>150.750000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>300.500000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>450.250000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>600.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
 </div>
 
 <div class="output_area">
@@ -12817,14 +13028,19 @@ Name: unique, dtype: object</pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Groupby1"></a></p>
+<p><h4>Groupby Method: Brief Example</h4></p>
 <ul>
-<li><b>Second Case -- Results from the 'groupby' method produce a series or dataframe</b>: The 'groupby' method, splits results into a series of groups based on the values of one or more columns. Shortly, I'll be looking at this method in detail.  As a simple example, consider the following groupby call for the column labeled 'Decade' in the 'DF_BBTop600Text' dataframe:
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>Results from the 'groupby' method produce a series or dataframe. The 'groupby' method, splits results into a series of groups based on the values of one or more columns. Shortly, I'll be looking at this method in detail.  As a simple example, consider the following groupby call for the column labeled 'Decade' in the 'DF_BBTop600Text' dataframe:
 <br><br>
     <i>my_groupby_array = DF_BBTop600Text.groupby('Decade')['Decade'].count()</i>
 <br><br>
 This call will store the counts for each 'Decade' into an series with a column labeled 'Decade' and rows that are indexed by string labels.
-</li>
-</ul>
+&lt;/li&gt;
+&lt;/ul&gt;</p>
+
 </div>
 </div>
 </div>
@@ -12934,8 +13150,8 @@ Name: Decade, dtype: int64</pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Couple of things to note with this result:</p>
 <p><ol></p>
-<p><li>As the numbers show, the 'freq' of the array is the '80s' which was surfaced earlier by the 'describe' method.</li></p>
-<p><li>In the display, the order of the index is sorted alphabetically. The problem is that it doesn't make sense from a numerical perspective.  00s and 10s refer to the decades 2000 and 2010, while the remaining decades are all in the 1900s. So, it's preferable to sort this array numerically rather than alphabetically.  We'll see how to do this a little later in the notes.</p>
+<p><li>As the numbers show, the 'top' or most frequent Decade is the '80s' which encompassed 133 songs (i.e. which is the 'freq' of the array). This was surfaced earlier by the 'describe' method.</li></p>
+<p><li>In the display, the order of the index is sorted alphabetically. The problem is that it doesn't make sense from a numerical perspective. 00s and 10s refer to the decades 2000 and 2010, while the remaining decades are all in the 1900s. So, it's preferable to sort this array numerically rather than alphabetically.  We'll see how to do this a little later in the notes.</p>
 
 </div>
 </div>
@@ -12944,12 +13160,32 @@ Name: Decade, dtype: int64</pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h5>Selecting Subsets of Data from a Dataframe (for Display, Visualization and Analysis)</h5><p>There are three basic ways to select a subset of rows and columns from a dataframe including using:</p>
+<p><a class="anchor" id="Subsets"></a></p>
+<p><h4>Selecting Subsets of Data from a Dataframe (for Display, Visualization and Analysis)</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>There are three basic ways to select a subset of rows and columns from a dataframe including using:</p>
 <ul> 
 <li><i>df.colname or df['colname']</i></li>
 <li><i>df.loc[row_indexer,column_indexer]</i> -- where the row and column indexers are either labels, lists of labels, slices of labels denoted by 'start:stop' values, or boolean selection.</li>
 <li><i>df.iloc[row_indexer,column_indexer]</i> -- where the row and column indexers are either integers, lists of integers or slices of integers denoted by 'start:stop' values.</li>
+</ul><p>All of these methods are designed to answer questions about particular rows and columns of interest specified by the selection criteria.  For example, what are the names of the artists who sang/played the 5 highest ranking songs? Or, what was the Genre of the top 10 songs by rank? Or, which song titles were released in the 50s? Or, what was the Gender and Genre of the bottom 20 songs? Or, which song titles were released in the 50s?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Colnames"></a></p>
+<p><h5>Selecting particular columns using colnames</h5></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
 </ul>
+<p>In illustrating the methods we'll restrict the output by focusing on the 'head' or 'tail' of the dataframe.</p>
+
 </div>
 </div>
 </div>
@@ -12958,12 +13194,9 @@ Name: Decade, dtype: int64</pre>
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Selecting particular columns using colnames. In illustrating the methods we&#39;ll restrict </span>
-<span class="c1"># the output by focusing on the &#39;head&#39; or &#39;tail&#39; of the dataframe.</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Selecting a particular column using its label: DF_BBTop600Text[&#39;Genre&#39;]&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;restricting output to the first 5 rows&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Restricting output to the first 5 rows. This shows the top 5 songs by genre.&quot;</span><span class="p">)</span>
 <span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Genre&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
@@ -13003,7 +13236,7 @@ Name: Decade, dtype: int64</pre>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 Selecting a particular column using its label: DF_BBTop600Text[&#39;Genre&#39;]
-restricting output to the first 5 rows
+Restricting output to the first 5 rows. This shows the top 5 songs by genre.
 </pre>
 </div>
 </div>
@@ -13236,15 +13469,26 @@ DF_BBTop600Text[DF_BBTop600Text.Rank &lt; 5][[&#39;Genre&#39;,&#39;Decade&#39;]]
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="loc"></a></p>
+<p><h5>Selecting using loc method</h5></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>Selection subset of rows and columns using 'loc' method and label indexing. In all cases the row index is taken to be the default, so the indices are integers</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Selection subset of rows and columns using &#39;loc&#39; method and label indexing</span>
-<span class="c1"># In all cases the row index is taken to be the default, so the indices are integers</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Selecting subset using &#39;loc&#39; &amp; labels: DF_BBTop600Text.loc[1,&#39;Rank&#39;]&quot;</span><span class="p">)</span>
 <span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="s1">&#39;Rank&#39;</span><span class="p">]</span>
 
@@ -13617,15 +13861,26 @@ Then select based on boolean expression: temp_DF[temp_DF.Gender == &#39;Female]
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="iloc"></a></p>
+<p><h5>Selecting using iloc method</h5></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>Selecting particular rows and columns using 'iloc' and integer indexing. This is basically a clone of how indexing and selection is done with numpy arrays.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Selecting particular rows and columns using &#39;iloc&#39; and integer indexing. </span>
-<span class="c1"># This is basically a clone of how indexing and selection is done with numpy arrays.</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Selecting a subset using &#39;iloc&#39; and integers: DF_BBTop600Text.iloc[0,1]&quot;</span><span class="p">)</span>
 <span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
 
@@ -14029,12 +14284,102 @@ Selecting a subset using &#39;iloc&#39; and slice of integers: DF_BBTop600Text.i
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Frequency"></a></p>
+<p><h3>Frequency Distributions and Other Statistics for Groups and Subsets</h3></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>While the various "selection" methods provide information about the individual values in a subset of individual rows and columns, they don't provide any statistics for these subsets.  Bottom line, they can't explicitly be used to answer questions about the frequency distributions of the categorical variables or summary statistics about the numerical variables. These are some examples of the types of questions they're not designed to answer:</p>
+<ul>
+<li>Among all the top songs, what were the types of Genres and how many were of each type?</li>
+<li>Among the top 10 songs, how many were released by females and by males?</li>
+<li>Among the top 100 songs, how many of the songs were released for the various decades</li>
+<li>Among all the songs, what was the average rank of songs released by the various Genders</li>
+<li>Among the top 20 songs, were there more pop and rock songs released this century or last?</li>
+</ul><p>Questions of this type are are best handled by the 'value_counts' and 'groupby' methods.</p>
+<ul>
+    <li><i>value_counts</i>: This method returns a series containing the counts of the unique values for both categorical and numerical columns.</li>
+    <li><i>groupby</i>: This method splits results into a series of groups based on the values of one or more columns. Various statistics can be computed for each of the groups depending.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Value Counts"></a></p>
+<p><h4>value_counts of the Unique Values in a Column</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>The <i>value_counts()</i> method has 3 boolean parameters and 1 numeric parameter. Included are:</p>
+<ul>
+    <li>sort=  - sort by counts 'True' or 'False' (default is 'True'')</li>
+    <li>ascending= - sort order ascending 'False' or 'True' (default is 'False')</li>
+    <li>normalize= - display relative frequencies 'False' or 'True' (default 'False')</li>
+    <li>bins= - an integer indicating number of bins for grouping, the column must be numeric</li>
+</ul><p>Each of these is illustrated below:</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">Genre</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># value_count method</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Counts by Genre in descending order by count: DF_BBTop600Text.Genre.value_counts()&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">Genre</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Counts by Genre in ascending order by count:&quot;</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DF_BBTop600Text[&#39;Genre&#39;].value_counts(ascending=True)&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Genre&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Counts by Genre in ascending order by count: DF_BBTop600Text[&#39;Genre&#39;].value_counts()&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Normalizing results to reflect proportion for each value&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Genre&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Storing results from Genre value_counts:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sortedGenreCounts = DF_BBTop600Text[&#39;Genre&#39;].value_counts(ascending=True)&quot;</span><span class="p">)</span>
+<span class="n">sortedGenreCounts</span> <span class="o">=</span> <span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Genre&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Selecting specific Genre from store results: sortedGenreCounts[[&#39;R&amp;B&#39;,&#39;Rock&#39;]]&quot;</span><span class="p">)</span>
+<span class="n">sortedGenreCounts</span><span class="p">[[</span><span class="s1">&#39;R&amp;B&#39;</span><span class="p">,</span><span class="s1">&#39;Rock&#39;</span><span class="p">]]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Counts by Decade in descending order by count: DF_BBTop600Text[&#39;Decade&#39;]value_counts()&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">99</span><span class="p">,</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;One way to get the top 100 = rows 0 - 99&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Counts by Decade for top 100 in descending order by count:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DF_BBTop600Text.loc[0:99,&#39;Decade&#39;].value_counts()&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">99</span><span class="p">,</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Another way to get the top 100 = Rank &lt;= 100&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Counts by Rank in descending order by count:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DF_BBTop600Text.loc[DF_BBTop600Text.Rank &lt; 5][&#39;Decade&#39;].value_counts()&quot;</span><span class="p">)</span>   
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">Rank</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">][</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Counts by Rank Bins in descending order by counts:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DF_BBTop600Text.loc[&#39;Rank&#39;].value_counts(bins=4)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Because each of the ranks from 1 to 600 only occurs once, dividing them into by 4&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numerical groups is equivalent to separating them into quartiles of 150 each&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -14044,6 +14389,18 @@ Selecting a subset using &#39;iloc&#39; and slice of integers: DF_BBTop600Text.i
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Counts by Genre in descending order by count: DF_BBTop600Text.Genre.value_counts()
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -14066,16 +14423,301 @@ Name: Genre, dtype: int64</pre>
 
 </div>
 
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Counts by Genre in ascending order by count:
+DF_BBTop600Text[&#39;Genre&#39;].value_counts(ascending=True)
+</pre>
 </div>
 </div>
 
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Latin                 3
+Jazz                  5
+Country              23
+Dance/Electronic     27
+Hip-Hop/Rap          39
+Rock                108
+R&amp;B                 155
+Pop                 240
+Name: Genre, dtype: int64</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Counts by Genre in ascending order by count: DF_BBTop600Text[&#39;Genre&#39;].value_counts()
+Normalizing results to reflect proportion for each value
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Pop                 0.400000
+R&amp;B                 0.258333
+Rock                0.180000
+Hip-Hop/Rap         0.065000
+Dance/Electronic    0.045000
+Country             0.038333
+Jazz                0.008333
+Latin               0.005000
+Name: Genre, dtype: float64</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Storing results from Genre value_counts:
+sortedGenreCounts = DF_BBTop600Text[&#39;Genre&#39;].value_counts(ascending=True)
+
+Selecting specific Genre from store results: sortedGenreCounts[[&#39;R&amp;B&#39;,&#39;Rock&#39;]]
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>R&amp;B     155
+Rock    108
+Name: Genre, dtype: int64</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Counts by Decade in descending order by count: DF_BBTop600Text[&#39;Decade&#39;]value_counts()
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>90s    22
+80s    21
+10s    18
+70s    15
+00s    12
+60s     9
+50s     3
+Name: Decade, dtype: int64</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+One way to get the top 100 = rows 0 - 99
+Counts by Decade for top 100 in descending order by count:
+DF_BBTop600Text.loc[0:99,&#39;Decade&#39;].value_counts()
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>90s    22
+80s    21
+10s    18
+70s    15
+00s    12
+60s     9
+50s     3
+Name: Decade, dtype: int64</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Another way to get the top 100 = Rank &lt;= 100
+Counts by Rank in descending order by count:
+DF_BBTop600Text.loc[DF_BBTop600Text.Rank &lt; 5][&#39;Decade&#39;].value_counts()
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>90s    22
+80s    21
+10s    18
+70s    15
+00s    12
+60s     9
+50s     3
+Name: Decade, dtype: int64</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Counts by Rank Bins in descending order by counts:
+DF_BBTop600Text.loc[&#39;Rank&#39;].value_counts(bins=4)
+
+Because each of the ranks from 1 to 600 only occurs once, dividing them into by 4
+numerical groups is equivalent to separating them into quartiles of 150 each
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[19]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(450.25, 600.0]    150
+(300.5, 450.25]    150
+(150.75, 300.5]    150
+(0.4, 150.75]      150
+Name: Rank, dtype: int64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Groupby0"></a></p>
+<p><H4>Groupby Method: Computational Details&lt;/h4&gt;</p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>Like 'value_counts', 'groupby' can divide a set of rows into groups based on the value of a categorical column and then count the number of times each value occurs. The syntax for doing this is:</p>
+<p>array_name.groupby['colname'].count()</p>
+<p>Here, the resulting values will be sorted alphabetically from A-Z.</p>
+<p>However, unlike 'value_counts', 'groupby' is not restricted to a single group nor is it restricted to simple counts (or proportions). 'groupby can create groups from multiple column and can compute a number of statistics in addition to counts. Included among the statistics are:</p>
+<table align="left">
+<th>Function</th><th>Description</th>
+<tr><td>mean()</td><td>Compute mean of groups</td></tr>
+<tr><td>sum()</td><td>Compute sum of group values</td></tr>
+<tr><td>size()</td><td>Compute group sizes</td></tr>
+<tr><td>count()</td><td>Compute count of group</td></tr>
+<tr><td>std()</td><td>Standard deviation of groups</td></tr>
+<tr><td>var()</td><td>Compute variance of groups</td></tr>
+<tr><td>sem()</td><td>Standard error of the mean of groups</td></tr>
+<tr><td>describe()</td><td>Generates descriptive statistics</td></tr>
+<tr><td>first()</td><td>Compute first of group values</td></tr>
+<tr><td>last()</td><td>Compute last of group values</td></tr>
+<tr><td>nth()</td><td>Take nth value, or a subset if n is a list</td></tr>
+<tr><td>min()</td><td>Compute min of group values</td></tr>
+<tr><td>max()</td><td>Compute max of group values</td></tr>
+</table><p>These statistics can be computed one at a time or, using the "aggregate" method (designated as 'agg'), can compute a list of statistics for the various groups.  To do this the list can either contain quoted names for the stats (e.g. ['mean','median'] or use 'np' notation (e.g. [np.mean, np.median]. Together a request might look like:</p>
+<p>DF_BBTop600Text.groupby('Gender').agg(['mean', 'median'])</p>
+<p>In addition to creating groups based on a single column, 'groupby' can be used to create groups based on multiple columns.  The statistics can then be computed for the various combinations of column values.  For example,</p>
+<p>DF_BBTop600Text['Gender','Decade']).count</p>
+<p>or</p>
+<p>DF_BBTop600Text['Gender','Decade'])['Rank'].median</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Genre&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;groupby Gender then compute the median Rank for each value of Gender:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DF_BBTop600Text.groupby(&#39;Gender&#39;)[&#39;Rank&#39;].median()&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Gender&#39;</span><span class="p">)[</span><span class="s1">&#39;Rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;median&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DF_BBTop600Text.groupby(&#39;Gender&#39;)[&#39;Rank&#39;].agg([&#39;mean&#39;,&#39;median&#39;,&#39;size&#39;])&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Gender&#39;</span><span class="p">)[</span><span class="s1">&#39;Rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span><span class="s1">&#39;median&#39;</span><span class="p">,</span><span class="s1">&#39;size&#39;</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;groupby Gender then compute summary statistics for Rank with &#39;describe&#39;:&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Gender&#39;</span><span class="p">)[</span><span class="s1">&#39;Rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The index for the group will be the list of values sorted alphabetically:&quot;</span><span class="p">)</span>
+<span class="n">Gender_Describe</span> <span class="o">=</span> <span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Gender&#39;</span><span class="p">)[</span><span class="s1">&#39;Rank&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span class="n">Gender_Describe</span><span class="o">.</span><span class="n">index</span>
 </pre></div>
 
 </div>
@@ -14085,6 +14727,19 @@ Name: Genre, dtype: int64</pre>
 <div class="output_wrapper">
 <div class="output">
 
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+groupby Gender then compute the median Rank for each value of Gender:
+DF_BBTop600Text.groupby(&#39;Gender&#39;)[&#39;Rank&#39;].median()
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -14094,15 +14749,266 @@ Name: Genre, dtype: int64</pre>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Pop                 240
-R&amp;B                 155
-Rock                108
-Hip-Hop/Rap          39
-Dance/Electronic     27
-Country              23
-Jazz                  5
-Latin                 3
-Name: Genre, dtype: int64</pre>
+<pre>Gender
+Duo/Group           305
+Female              325
+Female/Duo/Group    285
+Male                282
+Male/Duo/Group      574
+Male/Female         289
+Name: Rank, dtype: int64</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+median
+DF_BBTop600Text.groupby(&#39;Gender&#39;)[&#39;Rank&#39;].agg([&#39;mean&#39;,&#39;median&#39;,&#39;size&#39;])
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean</th>
+      <th>median</th>
+      <th>size</th>
+    </tr>
+    <tr>
+      <th>Gender</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Duo/Group</th>
+      <td>303.330472</td>
+      <td>305</td>
+      <td>233</td>
+    </tr>
+    <tr>
+      <th>Female</th>
+      <td>302.160839</td>
+      <td>325</td>
+      <td>143</td>
+    </tr>
+    <tr>
+      <th>Female/Duo/Group</th>
+      <td>277.000000</td>
+      <td>285</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>Male</th>
+      <td>294.697115</td>
+      <td>282</td>
+      <td>208</td>
+    </tr>
+    <tr>
+      <th>Male/Duo/Group</th>
+      <td>574.000000</td>
+      <td>574</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Male/Female</th>
+      <td>309.416667</td>
+      <td>289</td>
+      <td>12</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+groupby Gender then compute summary statistics for Rank with &#39;describe&#39;:
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>count</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>min</th>
+      <th>25%</th>
+      <th>50%</th>
+      <th>75%</th>
+      <th>max</th>
+    </tr>
+    <tr>
+      <th>Gender</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Duo/Group</th>
+      <td>233.0</td>
+      <td>303.330472</td>
+      <td>168.708527</td>
+      <td>2.0</td>
+      <td>164.00</td>
+      <td>305.0</td>
+      <td>442.0</td>
+      <td>600.0</td>
+    </tr>
+    <tr>
+      <th>Female</th>
+      <td>143.0</td>
+      <td>302.160839</td>
+      <td>173.492609</td>
+      <td>5.0</td>
+      <td>155.00</td>
+      <td>325.0</td>
+      <td>448.0</td>
+      <td>593.0</td>
+    </tr>
+    <tr>
+      <th>Female/Duo/Group</th>
+      <td>3.0</td>
+      <td>277.000000</td>
+      <td>235.102105</td>
+      <td>38.0</td>
+      <td>161.50</td>
+      <td>285.0</td>
+      <td>396.5</td>
+      <td>508.0</td>
+    </tr>
+    <tr>
+      <th>Male</th>
+      <td>208.0</td>
+      <td>294.697115</td>
+      <td>178.910686</td>
+      <td>1.0</td>
+      <td>136.75</td>
+      <td>282.0</td>
+      <td>452.5</td>
+      <td>596.0</td>
+    </tr>
+    <tr>
+      <th>Male/Duo/Group</th>
+      <td>1.0</td>
+      <td>574.000000</td>
+      <td>NaN</td>
+      <td>574.0</td>
+      <td>574.00</td>
+      <td>574.0</td>
+      <td>574.0</td>
+      <td>574.0</td>
+    </tr>
+    <tr>
+      <th>Male/Female</th>
+      <td>12.0</td>
+      <td>309.416667</td>
+      <td>164.975182</td>
+      <td>18.0</td>
+      <td>228.50</td>
+      <td>289.0</td>
+      <td>466.5</td>
+      <td>553.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+The index for the group will be the list of values sorted alphabetically:
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[20]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Index([&#39;Duo/Group&#39;, &#39;Female&#39;, &#39;Female/Duo/Group&#39;, &#39;Male&#39;, &#39;Male/Duo/Group&#39;,
+       &#39;Male/Female&#39;],
+      dtype=&#39;object&#39;, name=&#39;Gender&#39;)</pre>
 </div>
 
 </div>
@@ -14110,13 +15016,41 @@ Name: Genre, dtype: int64</pre>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Adding"></a></p>
+<p><h4>Adding New Columns</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>As an aside, both Gender and Decade have issues. With Gender the issue is that there aren't enough 'Male/Duo/Groups','Female/Duo/Groups' or 'Male/Female' to warrent treating them as separate values.  It would probably be better to treat all three of the values as 'Duo/Group'. With Decade the issue is that the values are strings which are sorted alphabetically rather than numerically (e.g. '00s' which stands for '2000s' comes before the '50s' thru the '90s').  To solve both problems we have need create new columns transforming the values from the existing columns and then add these columns to the current dataframe. The general format for accomplishing this task is:</p>
+<p>df['new_col_name'][df['existing_col_name'] bool_comp] = 'new_value'</p>
+<p>Examples follow:</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Adding a New Column categorial column &#39;DecYr&#39; based on &#39;Decade&#39; </span>
+<span class="c1">#</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Adding DecYr based on Decade values:&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;50s&#39;</span><span class="p">,</span> <span class="s1">&#39;DecYr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1950&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;60s&#39;</span><span class="p">,</span> <span class="s1">&#39;DecYr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1960&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;70s&#39;</span><span class="p">,</span> <span class="s1">&#39;DecYr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1970&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;80s&#39;</span><span class="p">,</span> <span class="s1">&#39;DecYr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1980&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;90s&#39;</span><span class="p">,</span> <span class="s1">&#39;DecYr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1990&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;00s&#39;</span><span class="p">,</span> <span class="s1">&#39;DecYr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;2000&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Decade&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;10s&#39;</span><span class="p">,</span> <span class="s1">&#39;DecYr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;2010&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sample: DF_BBTop600Text.loc[DF_BBTop600Text[&#39;Decade&#39;] == &#39;50s&#39;, &#39;DecYr&#39;] = &#39;1950&#39;&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;DecYr&#39;</span><span class="p">)[</span><span class="s1">&#39;DecYr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -14129,20 +15063,34 @@ Name: Genre, dtype: int64</pre>
 
 <div class="output_area">
 
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Adding DecYr based on Decade values:
+Sample: DF_BBTop600Text.loc[DF_BBTop600Text[&#39;Decade&#39;] == &#39;50s&#39;, &#39;DecYr&#39;] = &#39;1950&#39;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
 <div class="prompt output_prompt">Out[21]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>80s    133
-70s    114
-90s    102
-00s     83
-60s     76
-10s     71
-50s     21
-Name: Decade, dtype: int64</pre>
+<pre>DecYr
+1950     21
+1960     76
+1970    114
+1980    133
+1990    102
+2000     83
+2010     71
+Name: DecYr, dtype: int64</pre>
 </div>
 
 </div>
@@ -14156,7 +15104,18 @@ Name: Decade, dtype: int64</pre>
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Adding a new column &#39;ArtistType&#39; based on existing &#39;Gender&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sample: DF_BBTop600Text.loc[DF_BBTop600Text[&#39;Gender&#39;] == &#39;Male&#39;, &#39;ArtistType&#39;] = &#39;Solo Male&#39;&quot;</span><span class="p">)</span>
+
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Female&#39;</span><span class="p">,</span> <span class="s1">&#39;ArtistType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Solo Female&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Male&#39;</span><span class="p">,</span> <span class="s1">&#39;ArtistType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Solo Male&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Female/Duo/Group&#39;</span><span class="p">,</span> <span class="s1">&#39;ArtistType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Duo/Group&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Male/Duo/Group&#39;</span><span class="p">,</span> <span class="s1">&#39;ArtistType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Duo/Group&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Male/Female&#39;</span><span class="p">,</span> <span class="s1">&#39;ArtistType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Duo/Group&#39;</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">DF_BBTop600Text</span><span class="p">[</span><span class="s1">&#39;Gender&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Duo/Group&#39;</span><span class="p">,</span> <span class="s1">&#39;ArtistType&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Duo/Group&#39;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DF_BBTop600Text.groupby(&#39;ArtistType&#39;)[&#39;ArtistType&#39;].count()&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;ArtistType&#39;</span><span class="p">)[</span><span class="s1">&#39;ArtistType&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -14169,19 +15128,30 @@ Name: Decade, dtype: int64</pre>
 
 <div class="output_area">
 
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Sample: DF_BBTop600Text.loc[DF_BBTop600Text[&#39;Gender&#39;] == &#39;Male&#39;, &#39;ArtistType&#39;] = &#39;Solo Male&#39;
+DF_BBTop600Text.groupby(&#39;ArtistType&#39;)[&#39;ArtistType&#39;].count()
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
 <div class="prompt output_prompt">Out[22]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Duo/Group           233
-Male                208
-Female              143
-Male/Female          12
-Female/Duo/Group      3
-Male/Duo/Group        1
-Name: Gender, dtype: int64</pre>
+<pre>ArtistType
+Duo/Group      249
+Solo Female    143
+Solo Male      208
+Name: ArtistType, dtype: int64</pre>
 </div>
 
 </div>
@@ -14195,7 +15165,12 @@ Name: Gender, dtype: int64</pre>
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># We can use these new variables to illustrate how we do a groupby based on multiple columns</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Multi-column groupby:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DF_BBTop600Text.groupby([&#39;ArtistType&#39;,&#39;DecYr&#39;])[&#39;ArtistType&#39;].count()&quot;</span><span class="p">)</span>
+<span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;ArtistType&#39;</span><span class="p">,</span><span class="s1">&#39;DecYr&#39;</span><span class="p">])[</span><span class="s1">&#39;ArtistType&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -14208,15 +15183,47 @@ Name: Gender, dtype: int64</pre>
 
 <div class="output_area">
 
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Multi-column groupby:
+DF_BBTop600Text.groupby([&#39;ArtistType&#39;,&#39;DecYr&#39;])[&#39;ArtistType&#39;].count()
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
 <div class="prompt output_prompt">Out[23]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>Artist    Chubby Checker
-Gender              Male
-Name: 0, dtype: object</pre>
+<pre>ArtistType   DecYr
+Duo/Group    1950      9
+             1960     37
+             1970     57
+             1980     64
+             1990     43
+             2000     22
+             2010     17
+Solo Female  1960      8
+             1970     21
+             1980     25
+             1990     39
+             2000     29
+             2010     21
+Solo Male    1950     12
+             1960     31
+             1970     36
+             1980     44
+             1990     20
+             2000     32
+             2010     33
+Name: ArtistType, dtype: int64</pre>
 </div>
 
 </div>
@@ -14224,6 +15231,637 @@ Name: 0, dtype: object</pre>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Unstack"></a></p>
+<p><h3>Unstacking Multi-Column Arrays</h3></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>Multi-column groupbys can be a bit difficult to read. Given in this case that the counts revolve around two columns. It's simpler to set up a cross-tab to display the data, although the totals are lacking.  This can simply be done with the 'unstack' method.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Creating a 2 x2 table with &#39;unstack()&#39;:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;multi_col_DF = DF_BBTop600Text.groupby([&#39;ArtistType&#39;,&#39;DecYr&#39;])[&#39;ArtistType&#39;].count()&quot;</span><span class="p">)</span>
+<span class="n">multi_col_DF</span> <span class="o">=</span> <span class="n">DF_BBTop600Text</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;ArtistType&#39;</span><span class="p">,</span><span class="s1">&#39;DecYr&#39;</span><span class="p">])[</span><span class="s1">&#39;ArtistType&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;multi_col_DF.unstack&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading across the rows it shows how counts of ArtistType vary by year&quot;</span><span class="p">)</span>
+<span class="n">xtab_DecYrBYArtistType</span> <span class="o">=</span> <span class="n">multi_col_DF</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span> 
+<span class="n">xtab_DecYrBYArtistType</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Creating a 2 x2 table with &#39;unstack()&#39;:
+multi_col_DF = DF_BBTop600Text.groupby([&#39;ArtistType&#39;,&#39;DecYr&#39;])[&#39;ArtistType&#39;].count()
+
+multi_col_DF.unstack
+Reading across the rows it shows how counts of ArtistType vary by year
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[24]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>DecYr</th>
+      <th>1950</th>
+      <th>1960</th>
+      <th>1970</th>
+      <th>1980</th>
+      <th>1990</th>
+      <th>2000</th>
+      <th>2010</th>
+    </tr>
+    <tr>
+      <th>ArtistType</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Duo/Group</th>
+      <td>9.0</td>
+      <td>37.0</td>
+      <td>57.0</td>
+      <td>64.0</td>
+      <td>43.0</td>
+      <td>22.0</td>
+      <td>17.0</td>
+    </tr>
+    <tr>
+      <th>Solo Female</th>
+      <td>NaN</td>
+      <td>8.0</td>
+      <td>21.0</td>
+      <td>25.0</td>
+      <td>39.0</td>
+      <td>29.0</td>
+      <td>21.0</td>
+    </tr>
+    <tr>
+      <th>Solo Male</th>
+      <td>12.0</td>
+      <td>31.0</td>
+      <td>36.0</td>
+      <td>44.0</td>
+      <td>20.0</td>
+      <td>32.0</td>
+      <td>33.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Plots"></a></p>
+<p><h3>pandas Plots</h3></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>Looking at this groupby array, we get a sense of how the numbers of the various ArtistTypes varied over the decades. Briefly Duo/Groups peaked in 1970, Solo Females in 1990 and Solo Males in 1980. This is more easily seen by plotting the data. pandas' 'plot' lacks the "bells and whistles" of other more extensive libraries like 'matplot'.  It is sufficient, however, for dealing with simpler problems of this sort. The basic structure of the methods is:</p>
+<p>plot([x, y, kind, ax, …])</p>
+<p>where the kind (of plot) has the following possibilities</p>
+<table align="left">
+</td></tr>
+<th>'kind' of Plot</th><th>Description</th>
+<tr><td>area</td><td>Area plot
+</td></tr>
+<tr><td>bar</td><td>Vertical bar plot.
+</td></tr>
+<tr><td>barh</td><td>Make a horizontal bar plot.
+</td></tr>
+<tr><td>box</td><td>Make a box plot of the DataFrame columns.
+</td></tr>
+<tr><td>density</td><td>Generate Kernel Density Estimate plot using Gaussian kernels.
+</td></tr>
+<tr><td>hexbin</td><td>Generate a hexagonal binning plot.
+</td></tr>
+<tr><td>hist</td><td>Draw one histogram of the DataFrame’s columns.
+</td></tr>
+<tr><td>kde</td><td>Generate Kernel Density Estimate plot using Gaussian kernels.
+</td></tr>
+<tr><td>line</td><td>Plot DataFrame columns as lines.
+</td></tr>
+<tr><td>pie</td><td>Generate a pie plot.
+</td></tr>
+<tr><td>scatter</td><td>Create a scatter plot with varying marker point size and color.
+</td></tr>
+<tr><td>boxplot</td><td>Make a box plot from DataFrame columns.
+</td></tr>
+<tr><td>hist</td><td>Make a histogram of the DataFrame’s.
+</td></tr>
+</table>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Bars"></a></p>
+<p><h4>Bar Plots</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># The following bar chart of the xtab displays the changes for each ArtistType across the decades.</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;bar&#39; plot for ArtistType counts over time: &quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;xtab_barplots = xtab_DecYrBYArtistType.plot(kind=&#39;bar&#39;, figsize=(10,6), legend=True)&quot;</span><span class="p">)</span>
+<span class="n">xtab_barplots</span> <span class="o">=</span> <span class="n">xtab_DecYrBYArtistType</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+&#39;bar&#39; plot for ArtistType counts over time: 
+xtab_barplots = xtab_DecYrBYArtistType.plot(kind=&#39;bar&#39;, figsize=(10,6), legend=True)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Subplots"></a></p>
+<p><h4>Plots with Subplots</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>While this type of bar plot enables us to make comparisons among the ArtistType over the decades, there are other chart configurations that make it a bit simpler.
+One of these possibilities is with subplots that highlight the differences.  To create separate subplots for each, we set the 'subplots' parameter to true, indicate the kind of grid 'layout' we want like 3 plots cross and 3 down, the amount of space the grid should occupy (here it's going
+to be 10 wide and 8 high, and whether we want a legend).</p>
+<p>Unfortunately, when we run it against the original xtab, unexpected results occur. We get a separate plot for each year, not each ArtistType.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;bar&#39; plot with subplots:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;xtab_DecYrBYArtistType.plot(kind=&#39;bar&#39;, subplots=True, layout=(3,3), figsize=(10,8), legend=False)&quot;</span><span class="p">)</span>
+<span class="n">xtab_bar_subplots</span> <span class="o">=</span> <span class="n">xtab_DecYrBYArtistType</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">8</span><span class="p">),</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+&#39;bar&#39; plot with subplots:
+
+xtab_DecYrBYArtistType.plot(kind=&#39;bar&#39;, subplots=True, layout=(3,3), figsize=(10,8), legend=False)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># So, to solve this problem we need to reverse the x, y positions of the two variables.</span>
+<span class="c1"># We do this by rotating or transposing the xtab, so that DecYrs become the rows </span>
+<span class="c1"># and ArtistType become the columns.</span>
+<span class="c1"># In this way we can see the way the counts for each of the ArtistTypes</span>
+<span class="c1"># changes over the year.</span>
+
+<span class="n">xtab_ArtistTypeByDecYr</span> <span class="o">=</span> <span class="n">xtab_DecYrBYArtistType</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<span class="n">xtab_ArtistTypeByDecYr</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt output_prompt">Out[27]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>ArtistType</th>
+      <th>Duo/Group</th>
+      <th>Solo Female</th>
+      <th>Solo Male</th>
+    </tr>
+    <tr>
+      <th>DecYr</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1950</th>
+      <td>9.0</td>
+      <td>NaN</td>
+      <td>12.0</td>
+    </tr>
+    <tr>
+      <th>1960</th>
+      <td>37.0</td>
+      <td>8.0</td>
+      <td>31.0</td>
+    </tr>
+    <tr>
+      <th>1970</th>
+      <td>57.0</td>
+      <td>21.0</td>
+      <td>36.0</td>
+    </tr>
+    <tr>
+      <th>1980</th>
+      <td>64.0</td>
+      <td>25.0</td>
+      <td>44.0</td>
+    </tr>
+    <tr>
+      <th>1990</th>
+      <td>43.0</td>
+      <td>39.0</td>
+      <td>20.0</td>
+    </tr>
+    <tr>
+      <th>2000</th>
+      <td>22.0</td>
+      <td>29.0</td>
+      <td>32.0</td>
+    </tr>
+    <tr>
+      <th>2010</th>
+      <td>17.0</td>
+      <td>21.0</td>
+      <td>33.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># The setup of the subplot is similar to before, except now the layout has 1 row and 3 cols is has</span>
+<span class="c1"># less height</span>
+<span class="c1"># The setup of the subplot is similar to before, except now the layout has 1 row and 3 cols is has</span>
+<span class="c1"># less height.  This basically ends up like the original bar plot but with separate plots</span>
+<span class="c1"># for each ArtistType. The problem with these plots is tht they all have different</span>
+<span class="c1"># y (vertical) ranges. So while you see the ups and downs you don&#39;t have a sense</span>
+<span class="c1"># of how they differ in magnitude.</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bar plot with subplots: ArtistType by DecYr:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;xtab_subplot1 = xtab_ArtistTypeByDecYr.plot(kind=&#39;bar&#39;, subplots=True, layout=(1,3), figsize=(10,2), legend=False)&quot;</span><span class="p">)</span>
+<span class="n">xtab_bar_subplot1</span> <span class="o">=</span> <span class="n">xtab_DecYrBYArtistType</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Bar plot with subplots: ArtistType by DecYr:
+
+xtab_subplot1 = xtab_ArtistTypeByDecYr.plot(kind=&#39;bar&#39;, subplots=True, layout=(1,3), figsize=(10,2), legend=False)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># A slightly different version of the same bar plot come about when</span>
+<span class="c1"># we alter the &#39;layout&#39; to 1 column and 3 rows and the &#39;figsize&#39; to accomodate</span>
+<span class="c1"># the shift in layout.  This layout is probably the easiest for comparing</span>
+<span class="c1"># shifts across time for each ArtistType. It&#39;s easy to see when one ArtistType</span>
+<span class="c1"># went up and another down. However, it still has the problem with comparing magnitudes.</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bar plot with subplots: ArtistType by DecYr:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;xtab_subplot2 = xtab_ArtistTypeByDecYr.plot(kind=&#39;bar&#39;, subplots=True, layout=(3,1), figsize=(6,6), legend=False)&quot;</span><span class="p">)</span>
+
+<span class="n">xtab_subplot2</span> <span class="o">=</span> <span class="n">xtab_ArtistTypeByDecYr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+Bar plot with subplots: ArtistType by DecYr:
+
+xtab_subplot2 = xtab_ArtistTypeByDecYr.plot(kind=&#39;bar&#39;, subplots=True, layout=(3,1), figsize=(6,6), legend=False)
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Lines"></a></p>
+<p><h4>Line Plots</h4></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>Both the patterns and magnitudes are more easily seen by shifting to a 'line' plot. Here, don't need subplots so the magnitudes, as well as the peaks and valleys, are easily determined because the 3 plots for the 3 ArtistTypes use the same X and Y axes.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;line&#39; plot for each DecYr across ArtistTypes:  &quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;xtab_subplots_line = xtab_DecYrBYArtistType.plot(kind=&#39;line&#39;, subplots=False, figsize=(6,4), legend=True)&quot;</span><span class="p">)</span>
+<span class="n">xtab_line</span> <span class="o">=</span> <span class="n">xtab_ArtistTypeByDecYr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;line&#39;</span><span class="p">,</span> <span class="n">subplots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Comparing the three lines we see the predominance of Top600 Songs released by Duo/Groups&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;and Solo Males in the 80s and their subsequent decline in this century with the concommitant&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rise in releases from Solo Female artists in the 90s followed by their dropoff and.&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;re-emergence of Solo/Male artists.&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+&#39;line&#39; plot for each DecYr across ArtistTypes:  
+
+xtab_subplots_line = xtab_DecYrBYArtistType.plot(kind=&#39;line&#39;, subplots=False, figsize=(6,4), legend=True)
+
+Comparing the three lines we see the predominance of Top600 Songs released by Duo/Groups
+and Solo Males in the 80s and their subsequent decline in this century with the concommitant
+rise in releases from Solo Female artists in the 90s followed by their dropoff and.
+re-emergence of Solo/Male artists.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a class="anchor" id="Final"></a></p>
+<p><h3>Final Comments</h3></p>
+<ul>
+<li><a href="#toc">Return to TOC</a></li>
+</ul>
+<p>The dataset used throughout these notes is heavy on the categorical side and light on the numerical side. Yet, most of the methods that have been employed could be easily used with numerical data.  For those who are interested, the dataset entitled &lt;a href= "<a href="https://github.com/daveking63/Billboard-and-RIAA-datasets/blob/master/RIAA-Top100_Artists_All_Certified_Albums_.txt&quot;&gt;">https://github.com/daveking63/Billboard-and-RIAA-datasets/blob/master/RIAA-Top100_Artists_All_Certified_Albums_.txt&quot;&gt;</a><i>RIAA-Top100_Artists_All_Certified_Albums</i>&lt;/a&gt; has a good mix of numerical and categorical variables. For "fun" you might try a number of the methods described here with that set.</p>
+<p>The other final caveat, there are whole segments of pandas methods that are relatively untouched in these notes. For example, 'reshaping' and the 'pivot' can play a key role in working with multi-column arrays (like those towards the end of these notes). The same can be said for pandas' 'time series' and 'date' functionality. All of these are covered in the pandas' documentation.</p>
+
+</div>
+</div>
 </div>
     </div>
   </div>
