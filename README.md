@@ -12,5 +12,5 @@ This repository contains a series of Jupyter/iPython notebooks illustrating the 
 In a github repository, <i>.ipynb</i> notebooks are rendered as static files. There are a variety of ways to access the interactive features of a notebook in a repository. One way is to set up a local notebook server (e.g. on your laptop) and download the notebook of interest to this server. Another is to use <a href="https://nbviewer.jupyter.org">Jupyter's web-based <i>nbviewer</i></a> to render the notebook. This is done by simply entering the url of the .ipynb notebook of interest on the site. For the notebooks in this repository, the following urls will activate the designated notebooks:
 
 https://nbviewer.jupyter.org/github/daveking63/Jupyter-iPython-Notebooks/blob/master/NumPy%20Notes.ipynb
-https://nbviewer.jupyter.org/github/daveking63/Jupyter-iPython-Notebooks/blob/master/Pandas%20Notes.ipynb
+https://nbviewer.jupyter.org/github/daveking63/Jupyter-iPython-Notebooks/blob/master/Pandas.ipynb
 https://nbviewer.jupyter.org/github/daveking63/Jupyter-iPython-Notebooks/blob/master/SemiStructuredData_PythonDicts_JSON_MongoDB_PyMongo%20Notes.ipynb
