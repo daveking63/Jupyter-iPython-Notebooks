@@ -1,7 +1,8 @@
-# Jupyter-iPython-Notebooks
+# Jupyter-iPython-Notebooks: Working with Structured and Semi-Structured Data
+
 Collection of Notebooks containing notes/tutorials for various Python libraries (in process)
 
-This repository contains a series of Jupyter/iPython notebooks illustrating the use of select Python modules or libraries dealing with various problems in data science.  The current list of topics includes:
+This repository contains a series of Jupyter/iPython notebooks illustrating the use of select Python modules or libraries dealing with the data encountered in data science -- both structured and non-structured. The current list of topics includes:
 
 <ul>
 <li><b>NumPy</b>: Part of the larger SciPy library, provides a number of methods and functions for creating, managing and manipulating N-dimensional numpy arrays which includes an extensive collection of mathematical and statistical methods for operating on those arrays.</li>
